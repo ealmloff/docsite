@@ -1477,27 +1477,27 @@ imports.wbg.__wbg_scrollTo_3fa406312438ebdf = function() { return logError(funct
     getObject(arg0).scrollTo(arg1, arg2);
 }, arguments) };
 imports.wbg.__wbindgen_closure_wrapper1363 = function() { return logError(function (arg0, arg1, arg2) {
-    const ret = makeClosure(arg0, arg1, 464, __wbg_adapter_48);
+    const ret = makeClosure(arg0, arg1, 465, __wbg_adapter_48);
     return addHeapObject(ret);
 }, arguments) };
 imports.wbg.__wbindgen_closure_wrapper1676 = function() { return logError(function (arg0, arg1, arg2) {
-    const ret = makeMutClosure(arg0, arg1, 479, __wbg_adapter_51);
+    const ret = makeMutClosure(arg0, arg1, 480, __wbg_adapter_51);
     return addHeapObject(ret);
 }, arguments) };
 imports.wbg.__wbindgen_closure_wrapper1738 = function() { return logError(function (arg0, arg1, arg2) {
-    const ret = makeMutClosure(arg0, arg1, 464, __wbg_adapter_54);
+    const ret = makeMutClosure(arg0, arg1, 465, __wbg_adapter_54);
     return addHeapObject(ret);
 }, arguments) };
-imports.wbg.__wbindgen_closure_wrapper2814 = function() { return logError(function (arg0, arg1, arg2) {
-    const ret = makeMutClosure(arg0, arg1, 464, __wbg_adapter_57);
+imports.wbg.__wbindgen_closure_wrapper2815 = function() { return logError(function (arg0, arg1, arg2) {
+    const ret = makeMutClosure(arg0, arg1, 465, __wbg_adapter_57);
     return addHeapObject(ret);
 }, arguments) };
-imports.wbg.__wbindgen_closure_wrapper2882 = function() { return logError(function (arg0, arg1, arg2) {
-    const ret = makeMutClosure(arg0, arg1, 464, __wbg_adapter_54);
+imports.wbg.__wbindgen_closure_wrapper2883 = function() { return logError(function (arg0, arg1, arg2) {
+    const ret = makeMutClosure(arg0, arg1, 465, __wbg_adapter_54);
     return addHeapObject(ret);
 }, arguments) };
-imports.wbg.__wbindgen_closure_wrapper2960 = function() { return logError(function (arg0, arg1, arg2) {
-    const ret = makeMutClosure(arg0, arg1, 507, __wbg_adapter_51);
+imports.wbg.__wbindgen_closure_wrapper2961 = function() { return logError(function (arg0, arg1, arg2) {
+    const ret = makeMutClosure(arg0, arg1, 508, __wbg_adapter_51);
     return addHeapObject(ret);
 }, arguments) };
 imports['./snippets/dioxus-interpreter-js-7853214f69bd9fe6/inline0.js'] = __wbg_star0;
