@@ -2,8 +2,8 @@ name: github pages
 
 on:
   push:
-    branches:
-      - master
+    # branches:
+    #   - master
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -13,19 +13,19 @@ jobs:
   build-deploy:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
           toolchain: stable
           override: true
           target: wasm32-unknown-unknown
-      - uses: Swatinem/rust-cache@v1
+      - uses: Swatinem/rust-cache@v2
       - uses: actions-rs/install@v0.1
         with:
           crate: dioxus-cli
           version: latest
           use-tool-cache: true
-      - uses: actions/checkout@v2
       - name: Build
         run: dx build --release --features web && cargo run --release --features prebuild && cp docs/index.html docs/404.html
       - name: Deploy 🚀
