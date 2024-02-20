@@ -1,3 +1,4 @@
+/.dioxus
 /target
 Cargo.lock
 .DS_Store
@@ -8,5 +9,11 @@ Cargo.lock
 !.vscode/launch.json
 !.vscode/extensions.json
 
+.idea
+
 /pkg
-dist
+/static
+/docs/learn/0.3
+/docs/assets/
+/docs/static/
+/docs/

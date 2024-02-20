@@ -1,8 +1,9 @@
 use crate::icons;
+use crate::Link;
 use dioxus::prelude::*;
-use dioxus_router::Link;
+use dioxus_router::prelude::*;
 
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Clone, Copy)]
 pub struct BlogPost {
     category: &'static str,
     date: &'static str,
@@ -22,6 +23,11 @@ pub const POST_TEMPLATE: BlogPost = BlogPost {
     content: include_str!("../../../posts/templates.html"),
 };
 
+#[component]
+pub fn PostTemplate() -> Element {
+    rsx! { SinglePost { post: POST_TEMPLATE } }
+}
+
 pub const POST_FULLTINME: BlogPost = BlogPost {
     category: "Misc",
     date: "May 5 2023",
@@ -32,6 +38,25 @@ pub const POST_FULLTINME: BlogPost = BlogPost {
     content: include_str!("../../../posts/fulltime.html"),
 };
 
+#[component]
+pub fn PostFulltime() -> Element {
+    rsx! { SinglePost { post: POST_FULLTINME } }
+}
+
+pub const POST_RELEASE_040: BlogPost = BlogPost {
+    category: "Release Notes",
+    date: "Aug 1 2023",
+    title: "Announcing Dioxus 0.4",
+    description: "An overhauled router, fullstack, desktop hotreloading, and more!",
+    link: "/blog/release-040/",
+    content: include_str!("../../../posts/release040.html"),
+};
+
+#[component]
+pub fn PostRelease040() -> Element {
+    rsx! { SinglePost { post: POST_RELEASE_040 } }
+}
+
 pub const POST_RELEASE_030: BlogPost = BlogPost {
     category: "Release Notes",
     date: "Feb 8 2023",
@@ -40,6 +65,11 @@ pub const POST_RELEASE_030: BlogPost = BlogPost {
     link: "/blog/release-030/",
     content: include_str!("../../../posts/release030.html"),
 };
+
+#[component]
+pub fn PostRelease030() -> Element {
+    rsx! { SinglePost { post: POST_RELEASE_030 } }
+}
 
 pub const POST_RELEASE_020: BlogPost = BlogPost {
     category: "Release Notes",
@@ -50,6 +80,11 @@ pub const POST_RELEASE_020: BlogPost = BlogPost {
     content: include_str!("../../../posts/release020.html"),
 };
 
+#[component]
+pub fn PostRelease020() -> Element {
+    rsx! { SinglePost { post: POST_RELEASE_020 } }
+}
+
 pub const POST_RELEASE_010: BlogPost = BlogPost {
     category: "Release Notes",
     date: "Jan 3 2022",
@@ -59,7 +94,13 @@ pub const POST_RELEASE_010: BlogPost = BlogPost {
     content: include_str!("../../../posts/release.html"),
 };
 
+#[component]
+pub fn PostRelease010() -> Element {
+    rsx! { SinglePost { post: POST_RELEASE_010 } }
+}
+
 pub const POSTS: &[BlogPost] = &[
+    POST_RELEASE_040,
     POST_FULLTINME,
     POST_RELEASE_030,
     POST_TEMPLATE,
@@ -67,55 +108,60 @@ pub const POSTS: &[BlogPost] = &[
     POST_RELEASE_010,
 ];
 
-pub fn BlogList(cx: Scope) -> Element {
-    cx.render(rsx!(
-        section { class: "text-gray-600 body-font overflow-hidden dark:bg-ideblack",
-            div { class: "container lg:px-48 pt-12 pb-12 mx-auto",
+#[component]
+pub fn BlogList() -> Element {
+    rsx!(
+        section { class: "body-font overflow-hidden dark:bg-ideblack",
+            div { class: "container max-w-screen-lg pt-12 pb-12 mx-auto",
                 div { class: "-my-8 px-8 pb-12",
                     // Header
-                    BlogHeader {}
+                    h2 { class: "dark:text-white mb-8 md:mb-16 sm:text-3xl text-2xl font-medium title-font font-sans",
+                        "Recent Blog Posts"
+                    }
                     section { class: "body-font overflow-hidden dark:bg-ideblack",
                         div { class: "container px-6 mx-auto",
                             div { class: "-my-8 divide-y-2 divide-gray-100",
-                                POSTS.iter().enumerate().map(|(id, post)| rsx! { BlogPostItem { post: post, id: id } })
+                                for post in POSTS.iter() {
+                                    BlogPostItem { post: post }
+                                }
                             }
                         }
                     }
                 }
             }
         }
-    ))
+    )
 }
 
-#[inline_props]
-pub fn SinglePost(cx: Scope, post: BlogPost) -> Element {
+#[component]
+pub fn SinglePost(post: BlogPost) -> Element {
     let BlogPost { content, .. } = post;
 
-    cx.render(rsx! {
+    rsx! {
         section { class: "text-gray-600 body-font overflow-hidden dark:bg-ideblack",
             div { class: "container lg:px-20 xl:px-48 pt-12 pb-12 mx-auto",
-                div { class: "-my-8",
-                    script { "Prism.highlightAll()" }
-                    div { class: "flex w-full mb-20 flex-wrap list-none",
-                        style {
-                            ".markdown-body ul {{ list-style: disc; }}"
-                            ".markdown-body li {{ display: list-item; }}"
-                        }
-                        article { class: "markdown-body", dangerous_inner_html: format_args!("{}", content) }
-                        script { "Prism.highlightAll()" }
+                script { "Prism.highlightAll()" }
+                div { class: "flex w-full mb-20 flex-wrap list-none",
+                    style {
+                        ".markdown-body ul {{ list-style: disc; }}"
+                        ".markdown-body li {{ display: list-item; }}"
+                        ".markdown-body img {{ max-height: 500px; margin-left: auto; margin-right: auto; padding-left: 4px; padding-right: 4px; }}"
+                        ".markdown-body .highlight pre, .markdown-body pre {{ background-color: #1e1e1e }}"
                     }
+                    article { class: "markdown-body", dangerous_inner_html: format_args!("{}", content) }
+                    script { "Prism.highlightAll()" }
                 }
             }
         }
-    })
+    }
 }
 
-fn BlogHeader(cx: Scope) -> Element {
-    cx.render(rsx!(
+fn BlogHeader() -> Element {
+    rsx!(
         section { class: "py-20",
             div { class: "container px-4 mx-auto dark:text-white",
 
-                h2 { class: "mb-8 md:mb-16 text-5xl lg:text-6xl font-semibold font-heading font-mono",
+                h2 { class: "mb-8 md:mb-16 text-5xl lg:text-6xl font-semibold font-heading font-sans",
                     "Dioxus Official Blog"
                 }
 
@@ -128,28 +174,30 @@ fn BlogHeader(cx: Scope) -> Element {
                 }
             }
         }
-    ))
+    )
 }
 
 pub static RecentBlogPosts: Component<()> = |cx| {
-    cx.render(rsx! {
+    rsx! {
         section { class: "body-font overflow-hidden dark:bg-ideblack",
             div { class: "container px-6 lg:px-40 pt-24 pb-36 mx-auto max-w-screen-xl",
                 div { class: "flex flex-col w-full mb-10",
-                    h1 { class: "sm:text-3xl text-2xl font-medium title-font mb-4 dark:text-white font-mono",
+                    h1 { class: "sm:text-3xl text-2xl font-medium title-font mb-4 dark:text-white",
                         "Recent Blog Posts"
                     }
                 }
                 div { class: "-my-8 divide-y-2 divide-gray-100",
-                    POSTS.iter().enumerate().map(|(id, post)| rsx!{ BlogPostItem { post: post, id: id } })
+                    for post in POSTS.iter() {
+                        BlogPostItem { post: post }
+                    }
                 }
             }
         }
-    })
+    }
 };
 
-#[inline_props]
-fn BlogPostItem(cx: Scope, post: &'static BlogPost, id: usize) -> Element {
+#[component]
+fn BlogPostItem(post: &'static BlogPost) -> Element {
     let BlogPost {
         category,
         date,
@@ -159,22 +207,26 @@ fn BlogPostItem(cx: Scope, post: &'static BlogPost, id: usize) -> Element {
         ..
     } = post;
 
-    cx.render(rsx!(
+    rsx!(
         div { class: "py-8 flex flex-wrap md:flex-nowrap",
             div { class: "md:w-32 md:mb-0 mb-6 flex-shrink-0 flex flex-col",
-                span { class: "font-semibold title-font text-gray-700 dark:text-white", "{category}" }
+                span { class: "font-semibold title-font text-gray-700 dark:text-white",
+                    "{category}"
+                }
                 span { class: "mt-1 text-gray-500 text-sm", "{date}" }
             }
             div { class: "md:flex-grow",
                 h2 { class: "text-2xl font-medium text-gray-900 title-font mb-2 dark:text-white",
                     "{title}"
                 }
-                p { class: "leading-relaxed dark:text-white text-base dark:opacity-75", "{description}" }
-                Link { class: "text-indigo-500 inline-flex items-center mt-4", to: "{link}",
+                p { class: "leading-relaxed dark:text-white text-base dark:opacity-75",
+                    "{description}"
+                }
+                Link { class: "text-indigo-500 inline-flex items-center mt-4", to: *link,
                     "Read more"
                     icons::ArrowRight {}
                 }
             }
         }
-    ))
+    )
 }

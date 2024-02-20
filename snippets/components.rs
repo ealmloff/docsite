@@ -1,6 +1,6 @@
 //! Encapsulate state in components.
 //!
-//! Use structs or autodderive props with `#[inline_props]`
+//! Use structs or autodderive props with `#[component]`
 
 #[derive(Props, PartialEq)]
 struct PropBased {
@@ -8,6 +8,6 @@ struct PropBased {
     age: String,
 }
 
-fn Stateful(cx: Scope<PropBased>) -> Element {
-    render!("Hello {cx.name}, you are {cx.age} years old!")
+fn Stateful(props: PropBased) -> Element {
+    rsx!("Hello {props.name}, you are {props.age} years old!")
 }

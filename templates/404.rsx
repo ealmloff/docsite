@@ -1,6 +1,6 @@
 
-fn component(cx: Scope) -> Element {
-    cx.render(rsx!(
+fn component() -> Element {
+    rsx!(
         section { class: "py-20",
             div { class: "container px-4 mx-auto",
                 div { class: "mb-12 text-center",
@@ -27,7 +27,7 @@ fn component(cx: Scope) -> Element {
                 div { class: "max-w-4xl h-64 md:h-96 mx-auto",
                     img { class: "h-full w-full rounded-lg object-cover",
                         src: "plain-assets/images/indigo-600-horizontal.png",
-                        alt: "",
+                        alt: "Background",
                     }
                 }
             }

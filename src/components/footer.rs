@@ -1,6 +1,13 @@
+use crate::HIGHLIGHT_NAV_LAYOUT;
 use dioxus::prelude::*;
 
-pub static Footer: Component<()> = |cx| {
+pub fn Footer() -> Element {
+    let bg_color = if HIGHLIGHT_NAV_LAYOUT() {
+        "border border-orange-600 rounded-md"
+    } else {
+        ""
+    };
+
     let categories = [
         (
             "Community",
@@ -14,11 +21,8 @@ pub static Footer: Component<()> = |cx| {
             "Learning",
             &[
                 ("docs.rs", "https://docs.rs/dioxus"),
-                ("Guide", "https://dioxuslabs.com/docs/0.3/guide/en"),
-                (
-                    "Awesome",
-                    "/awesome",
-                ),
+                ("Guide", "/learn/0.4/guide"),
+                ("Awesome", "/awesome"),
             ],
         ),
         (
@@ -41,27 +45,31 @@ pub static Footer: Component<()> = |cx| {
                     "{name}"
                 }
                 nav { class: "list-none mb-10",
-                    links.iter().map(|f| rsx!{
-                        li { key: "{f.0}",
-                            a { class: "text-gray-400 hover:text-white",
+                    ul {
+                        for f in links.iter() {
+                            li { key: "{f.0}", a {
+                                class: "text-gray-400 hover:text-white",
                                 href: "{f.1}",
                                 "{f.0}"
-                            }
+                            } }
                         }
-                    })
+                    }
                 }
             }
         }
     });
 
-    cx.render(rsx! {
-        footer { class: "text-gray-400 bg-ghmetal body-font",
+    rsx! {
+        footer { class: "sticky z-30 text-gray-400 bg-ghmetal body-font {bg_color}",
             div { class: "container px-5 py-24 mx-auto flex md:items-center lg:items-start md:flex-row md:flex-nowrap flex-wrap flex-col",
                 div { class: "w-64 flex-shrink-0 md:mx-0 mx-auto text-center md:text-left",
-                    a { class: "flex title-font font-medium items-center md:justify-start justify-center text-white",
+                    a {
+                        class: "flex title-font font-medium items-center md:justify-start justify-center text-white",
+                        href: "https://github.com/DioxusLabs/dioxus",
                         img {
                             src: "https://avatars.githubusercontent.com/u/79236386?s=200&v=4",
-                            class: "h-8 w-auto"
+                            class: "h-8 w-auto",
+                            alt: "Dioxus Labs Icon"
                         }
                         span { class: "ml-3 text-xl", "Dioxus Labs" }
                     }
@@ -70,12 +78,12 @@ pub static Footer: Component<()> = |cx| {
                     }
                 }
                 div { class: "flex-grow flex flex-wrap md:pl-20 -mb-10 md:mt-0 mt-10 md:text-left text-center",
-                    categories
+                    {categories}
                 }
             }
             div { class: "container mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row",
                 p { class: "text-gray-400 text-sm text-center sm:text-left",
-                    "© 2022 Dioxus Labs —"
+                    "© 2023 Dioxus Labs —"
                     a {
                         class: "text-gray-500 ml-1",
                         rel: "noopener noreferrer",
@@ -86,5 +94,5 @@ pub static Footer: Component<()> = |cx| {
                 }
             }
         }
-    })
-};
+    }
+}

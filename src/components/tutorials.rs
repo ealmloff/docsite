@@ -1,5 +1,5 @@
+use crate::*;
 use dioxus::prelude::*;
-use dioxus_router::{use_route, Link};
 
 struct Tutorial {
     title: &'static str,
@@ -33,13 +33,13 @@ static TUTORIALS: &[Tutorial] = &[
     },
 ];
 
-pub fn Tutorials(cx: Scope) -> Element {
-    cx.render(rsx! {
+pub fn Tutorials() -> Element {
+    rsx! {
         div { class: "dark:bg-ideblack dark:text-white",
             div { class: "max-w-screen-lg mx-auto",
                 section { class: "py-10",
                     div { class: "container px-4 mx-auto dark:text-white",
-                        h2 { class: "mb-8 md:mb-16 text-5xl lg:text-6xl font-semibold font-heading font-mono",
+                        h2 { class: "mb-8 md:mb-16 text-5xl lg:text-6xl font-semibold font-heading font-sans",
                             "Tutorials"
                         }
                         div { class: "flex flex-wrap items-center",
@@ -62,47 +62,46 @@ pub fn Tutorials(cx: Scope) -> Element {
                 }
             }
         }
-    })
+    }
 }
 
-#[inline_props]
-fn TutorialPreview(cx: Scope, id: usize) -> Element {
-    let tutorial = &TUTORIALS[*id];
+#[component]
+fn TutorialPreview(id: usize) -> Element {
+    let tutorial = &TUTORIALS[id];
 
-    cx.render(rsx! {
+    rsx! {
         li { class: "pb-4 border-b border-gray-200 dark:border-gray-500",
-            Link { to: "/tutorials/{id}",
+            Link { to: Route::Tutorial { id },
                 div { class: "rounded p-4 shadow",
                     div { class: "flex justify-between",
-                        h2 { class: "text-lg font-bold", tutorial.title }
+                        h2 { class: "text-lg font-bold", "{tutorial.title}" }
                         div {
                             for tag in tutorial.tags {
-                                span { class: "rounded p-2 bg-orange", *tag }
+                                span { class: "rounded p-2 bg-orange", "{tag}" }
                             }
                         }
                     }
-                    p { tutorial.description }
+                    p { "{tutorial.description}" }
                 }
             }
         }
-    })
+    }
 }
 
-pub fn Tutorial(cx: Scope) -> Element {
-    let tutorial = use_route(cx)
-        .parse_segment_or_404::<usize>("id")
-        .and_then(|f| TUTORIALS.get(f))?;
+#[component]
+pub fn Tutorial(id: usize) -> Element {
+    let tutorial = TUTORIALS.get(id)?;
 
-    render!(
+    rsx!(
         div {
-            h1 { tutorial.title }
-            h3 { tutorial.author }
+            h1 { "{tutorial.title}" }
+            h3 { "{tutorial.author}" }
             ul {
                 for tag in tutorial.tags {
-                    li { *tag }
+                    li { "{tag}" }
                 }
             }
-            p { tutorial.contents }
+            p { "{tutorial.contents}" }
         }
     )
 }

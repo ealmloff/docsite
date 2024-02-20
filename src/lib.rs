@@ -1,7 +1,10 @@
-#![allow(non_snake_case, non_upper_case_globals)]
+#![allow(non_snake_case, non_upper_case_globals, unused)]
 
+use dioxus::html::input_data::keyboard_types::{Key, Modifiers};
 use dioxus::prelude::*;
-use dioxus_router::{Route, Router};
+use dioxus_router::prelude::*;
+pub use docs::BookRoute;
+use serde::{Deserialize, Serialize};
 
 macro_rules! export_items {
     (
@@ -19,8 +22,11 @@ macro_rules! export_items {
 pub mod icons;
 pub mod sitemap;
 
+pub mod shortcut;
+
+mod doc_examples;
+
 pub use components::*;
-use fermi::{use_init_atom_root, use_set};
 pub mod components {
     export_items! {
         pub mod blog;
@@ -31,40 +37,198 @@ pub mod components {
         pub mod notfound;
         pub mod tutorials;
         pub mod awesome;
+        pub mod deploy;
     }
 }
 
-pub fn app(cx: Scope) -> Element {
-    use_init_atom_root(cx);
-
-    let show_nav = use_set(cx, SHOW_NAV);
-
-    cx.render(rsx! {
-        Router { onchange: move |_| show_nav(false),
-            Nav {}
-            Route { to: "/", Homepage {} }
-            Route { to: "/index.html", Homepage {} }
-            Route { to: "/awesome", Awesome {}}
-            Route { to: "/learn", Learn {} }
-            Route { to: "/platforms/", Homepage {} }
-            Route { to: "/platforms/web", Homepage {} }
-            Route { to: "/platforms/desktop", Homepage {} }
-            Route { to: "/platforms/liveview", Homepage {} }
-            Route { to: "/platforms/mobile", Homepage {} }
-            Route { to: "/platforms/ssr", Homepage {} }
-            Route { to: "/platforms/tui", Homepage {} }
-            Route { to: "/tutorials/:id", Tutorial {} }
-            // Route { to: "/tutorials/", Tutorials {} }
-
-            Route { to: "/blog", BlogList {} }
-            Route { to: "/blog/", BlogList {} }
-            Route { to: "/blog/going-fulltime", SinglePost { post: POST_FULLTINME } }
-            Route { to: "/blog/release-030", SinglePost { post: POST_RELEASE_030 } }
-            Route { to: "/blog/introducing-dioxus", SinglePost { post: POST_RELEASE_010 } }
-            Route { to: "/blog/release-020", SinglePost { post: POST_RELEASE_020 } }
-            Route { to: "/blog/templates-diffing/", SinglePost { post: POST_TEMPLATE } }
-            Route { to: "", Err404 {} }
+#[component]
+fn HeaderFooter() -> Element {
+    shortcut::use_shortcut(Key::Character("/".to_string()), Modifiers::CONTROL, {
+        move || {
+            *SHOW_SEARCH.write() = true;
         }
-        Footer {}
-    })
+    });
+
+    rsx! {
+        div {
+            Nav {}
+            Outlet::<Route> {}
+            Footer {}
+        }
+    }
+}
+
+#[derive(Clone, Routable, PartialEq, Eq, Serialize, Deserialize, Debug)]
+#[rustfmt::skip]
+pub enum Route {
+    #[layout(HeaderFooter)]
+        #[route("/")]
+        #[redirect("/platforms", || Route::Homepage {})]
+        #[redirect("/platforms/web", || Route::Homepage {})]
+        #[redirect("/platforms/desktop", || Route::Homepage {})]
+        #[redirect("/platforms/liveview", || Route::Homepage {})]
+        #[redirect("/platforms/mobile", || Route::Homepage {})]
+        #[redirect("/platforms/ssr", || Route::Homepage {})]
+        #[redirect("/platforms/tui", || Route::Homepage {})]
+        Homepage {},
+
+        #[route("/awesome")]
+        Awesome {},
+
+        #[route("/deploy")]
+        Deploy {},
+
+        #[route("/tutorials/:id")]
+        Tutorial { id: usize },
+
+        #[nest("/blog")]
+            #[route("/")]
+            BlogList {},
+            #[route("/templates-diffing")]
+            PostTemplate {},
+            #[route("/going-fulltime")]
+            PostFulltime {},
+            #[route("/release-040")]
+            PostRelease040 {},
+            #[route("/release-030")]
+            PostRelease030 {},
+            #[route("/release-020")]
+            PostRelease020 {},
+            #[route("/introducing-dioxus")]
+            PostRelease010 {},
+        #[end_nest]
+
+        #[layout(Learn)]
+            #[nest("/learn")]
+                #[redirect("/", || Route::Docs { child: BookRoute::Index {} })]
+
+                #[route("/0.3/:..segments")]
+                DocsO3 {
+                    segments: Vec<String>
+                },
+                #[child("/0.4")]
+                Docs { child: BookRoute },
+            #[end_nest]
+        #[end_layout]
+    #[end_nest]
+    #[redirect("/docs/0.3/:..segments", |segments: Vec<String>| Route::DocsO3 { segments })]
+    #[redirect("/docs/:.._segments", |_segments: Vec<String>| Route::Docs { child: BookRoute::Index {} })]
+    #[route("/:..segments")]
+    #[route("/:..segments")]
+    Err404 { segments: Vec<String> },
+}
+
+pub fn use_url() -> String {
+    use_route::<Route>().to_string()
+}
+
+pub fn app() -> Element {
+    rsx! { Router::<Route> {} }
+}
+
+static SEARCH_INDEX: dioxus_search::LazySearchIndex<Route> = dioxus_search::load_search_index! {
+    "search"
+};
+mod docs {
+    use crate::components::*;
+    use crate::doc_examples::*;
+    use dioxus::prelude::*;
+
+    #[component]
+    fn SandBoxFrame(url: String) -> Element {
+        rsx! {
+            iframe {
+                style: "border: 1px solid rgba(0, 0, 0, 0.1);border-radius:2px;",
+                width: "800",
+                height: "450",
+                src: "{url}?embed=1",
+                "allowfullscreen": true
+            }
+        }
+    }
+
+    #[component]
+    fn DemoFrame(children: Element) -> Element {
+        rsx! {
+            div {
+                class: "bg-white rounded-md shadow-md p-4 my-4 overflow-scroll text-black dioxus-demo",
+                max_height: "50vh",
+                style {
+                    ".dioxus-demo div {{ all: revert; }}"
+                    ".dioxus-demo input {{ all: revert; }}"
+                    ".dioxus-demo form {{ all: revert; }}"
+                }
+                {children}
+            }
+        }
+    }
+
+    fn LayoutsExplanation() -> Element {
+        rsx! {
+            pre {
+                onmouseenter: move |_| {
+                    *HIGHLIGHT_NAV_LAYOUT.write() = true;
+                    *HIGHLIGHT_DOCS_LAYOUT.write() = true;
+                    *HIGHLIGHT_DOCS_CONTENT.write() = true;
+                },
+                onmouseleave: move |_| {
+                    *HIGHLIGHT_NAV_LAYOUT.write() = false;
+                    *HIGHLIGHT_DOCS_LAYOUT.write() = false;
+                    *HIGHLIGHT_DOCS_CONTENT.write() = false;
+                },
+                span {
+                    "#[derive(Clone, Routable, PartialEq, Eq, Serialize, Deserialize)]
+#[rustfmt::skip]
+pub enum Route {{\n\t"
+                }
+                span {
+                    onmouseenter: move |_| {
+                        *HIGHLIGHT_NAV_LAYOUT.write() = true;
+                        *HIGHLIGHT_DOCS_LAYOUT.write() = false;
+                        *HIGHLIGHT_DOCS_CONTENT.write() = false;
+                    },
+                    onmouseleave: move |_| {
+                        *HIGHLIGHT_NAV_LAYOUT.write() = true;
+                        *HIGHLIGHT_DOCS_LAYOUT.write() = true;
+                        *HIGHLIGHT_DOCS_CONTENT.write() = true;
+                    },
+                    class: "border border-orange-600 rounded-md",
+                    "#[layout(HeaderFooter)]"
+                }
+                span { "\n\t\t// ... other routes\n\t\t" }
+                span {
+                    onmouseenter: move |_| {
+                        *HIGHLIGHT_DOCS_LAYOUT.write() = true;
+                        *HIGHLIGHT_NAV_LAYOUT.write() = false;
+                        *HIGHLIGHT_DOCS_CONTENT.write() = false;
+                    },
+                    onmouseleave: move |_| {
+                        *HIGHLIGHT_NAV_LAYOUT.write() = true;
+                        *HIGHLIGHT_DOCS_LAYOUT.write() = true;
+                        *HIGHLIGHT_DOCS_CONTENT.write() = true;
+                    },
+                    class: "border border-green-600 rounded-md",
+                    r##"#[layout(DocsSidebars)]"##
+                }
+                "\n\t\t\t"
+                span {
+                    onmouseenter: move |_| {
+                        *HIGHLIGHT_NAV_LAYOUT.write() = false;
+                        *HIGHLIGHT_DOCS_LAYOUT.write() = false;
+                        *HIGHLIGHT_DOCS_CONTENT.write() = true;
+                    },
+                    onmouseleave: move |_| {
+                        *HIGHLIGHT_NAV_LAYOUT.write() = true;
+                        *HIGHLIGHT_DOCS_LAYOUT.write() = true;
+                        *HIGHLIGHT_DOCS_CONTENT.write() = true;
+                    },
+                    class: "border border-blue-600 rounded-md",
+                    r##"#[route("/learn")]"##
+                }
+                span { "\n\t\t\tDocs {{}},\n}}" }
+            }
+        }
+    }
+
+    use_mdbook::mdbook_router! {"docs-src/0.4"}
 }

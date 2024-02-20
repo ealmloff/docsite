@@ -53,7 +53,7 @@ rsx! {
 	Doc { document: doc }
 }
 
-#[inline_props]
+#[component]
 fn Doc<'a>(cx: Scope<'a>, document: &'a SomeBigDocument) -> Element {
 	// document is passed from a parent by reference!
 	// no smart pointers required!
@@ -166,21 +166,21 @@ ul {
 Edit::CreateElement("li")
 Edit::CreateElement("h3")
 Edit::CreateText("user")
-Edit::ApendChildren(1)
+Edit::AppendChildren(1)
 Edit::CreateElement("div")
 Edit::CreateText("hello 0", 2)
-Edit::ApendChildren(1)
-Edit::ApendChildren(2)
+Edit::AppendChildren(1)
+Edit::AppendChildren(2)
 
 // item two...
 Edit::CreateElement("li")
 Edit::CreateElement("h3")
 Edit::CreateText("user")
-Edit::ApendChildren(1)
+Edit::AppendChildren(1)
 Edit::CreateElement("div")
 Edit::CreateText("hello 0", 2)
-Edit::ApendChildren(1)
-Edit::ApendChildren(2)
+Edit::AppendChildren(1)
+Edit::AppendChildren(2)
 
 // and so on until we attach all the li to the ul
 Edit::AppendChildren(len)
@@ -217,7 +217,7 @@ Not only can templates be cached inside of a renderer, they can be modified afte
 
 ### Performant LiveView
 
-Another addition to Diouxs 0.3 is the new LiveView renderer. Much like its counterpart Phoenix LiveView, Dioxus LiveView enables entirely server-rendered apps and components while shipping minimal JS to the client. In the Liveview model, minimizing latency and bandwidth is crucial to keeping apps snappy, especially for lower-end clients.
+Another addition to Dioxus 0.3 is the new LiveView renderer. Much like its counterpart Phoenix LiveView, Dioxus LiveView enables entirely server-rendered apps and components while shipping minimal JS to the client. In the Liveview model, minimizing latency and bandwidth is crucial to keeping apps snappy, especially for lower-end clients.
 
 ![ElixirLivewview.jpg](Making%20Dioxus%20(almost)%20as%20fast%20as%20SolidJS%20baea0d5b4e614351ac8e3d4fc4240d04/ElixirLivewview.jpg)
 
@@ -246,7 +246,7 @@ Notice how the templates are collected during SSR and inserted into the header. 
 The other technique that SolidJS uses to achieve faster SSR performance is combining pre-rendered portions of templates together through string concatenation. Since the template is known at compile time, we can break it up into smaller chunks and just stitch them together during rendering. No need to build and traverse huge element trees!
 
 ```rust
-// Cached template segements:
+// Cached template segments:
 
 PreRendered("<div class=\"asdasdasd\" class=\"asdasdasd\"".into(),),
 Attr(0,),

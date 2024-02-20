@@ -118,9 +118,9 @@
 }
 </code></pre>
 <h2 id="inline-props-macro">Inline Props Macro</h2>
-<p>For internal components, explicitly declaring props structs can become tedious. That&#39;s why we&#39;ve built the new <code>inline_props</code> macro. This macro lets you inline your props definition right into your component function arguments.</p>
-<p>Simply add the <code>inline_props</code> macro to your component:</p>
-<pre><code class="lang-rust"><span class="hljs-meta">#[inline_props]</span>
+<p>For internal components, explicitly declaring props structs can become tedious. That&#39;s why we&#39;ve built the new <code>component</code> macro. This macro lets you inline your props definition right into your component function arguments.</p>
+<p>Simply add the <code>component</code> macro to your component:</p>
+<pre><code class="lang-rust"><span class="hljs-meta">#[component]</span>
 fn Child<span class="hljs-params">&lt;'a&gt;</span>(
 <span class="hljs-symbol">    cx:</span> Scope,
 <span class="hljs-symbol">    name:</span> String,
@@ -275,7 +275,7 @@ The VSCode extension is really easy to contribute to and has tons of potential. 
 <li><a href="https://github.com/FruitieX/homectl">Home automation server app</a> <a href="https://github.com/FruitieX">@FruitieX</a></li>
 <li><a href="https://github.com/rustkid/recorder">Video Recording app</a></li>
 <li><a href="https://github.com/autarch/Crumb/tree/master/web-frontend">Music streaming app</a> <a href="https://github.com/autarch">@autarch</a></li>
-<li><a href="https://gist.github.com/FruitieX/73afe3eb15da45e0e05d5c9cf5d318fc">NixOS dependency installation</a> <a href="https://github.com/FruitieX">@FruitieX</a></li>
+<li><a href="https://gist.github.com/FruitieX/73afe3eb15da45e0e05d5c9cf5d318fc">NixOS dependancy installation</a> <a href="https://github.com/FruitieX">@FruitieX</a></li>
 <li><a href="https://github.com/lucifer1004/dioxus-vercel-demo">Vercel Deploy Template</a> <a href="https://github.com/lucifer1004">@lucifer1004</a></li>
 <li><a href="https://github.com/oovm/katex-wasm">Render Katex in Dioxus</a></li>
 <li><a href="https://github.com/oovm/prism-wasm">Render PrismJS in Dioxus</a></li>
