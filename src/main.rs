@@ -3,64 +3,73 @@
 use dioxus::html::input_data::keyboard_types::{Key, Modifiers};
 use dioxus::prelude::*;
 use dioxus_router::prelude::*;
-pub use docs::BookRoute;
+pub(crate) use docs::BookRoute;
 use serde::{Deserialize, Serialize};
 
 macro_rules! export_items {
     (
         $(
-            pub mod $item:ident;
+            pub(crate) mod $item:ident;
         )*
     ) => {
         $(
-            pub mod $item;
-            pub use $item::*;
+            pub(crate) mod $item;
+            pub(crate) use $item::*;
         )*
     };
 }
 
-pub mod icons;
-pub mod sitemap;
+pub(crate) mod icons;
+pub(crate) mod sitemap;
 
-pub mod shortcut;
+pub(crate) mod shortcut;
 
 mod doc_examples;
+mod snippets;
 
-pub use components::*;
-pub mod components {
+pub(crate) use components::*;
+pub(crate) mod components {
     export_items! {
-        pub mod blog;
-        pub mod footer;
-        pub mod homepage;
-        pub mod learn;
-        pub mod nav;
-        pub mod notfound;
-        pub mod tutorials;
-        pub mod awesome;
-        pub mod deploy;
+        pub(crate) mod blog;
+        pub(crate) mod footer;
+        pub(crate) mod homepage;
+        pub(crate) mod learn;
+        pub(crate) mod nav;
+        pub(crate) mod notfound;
+        pub(crate) mod tutorials;
+        pub(crate) mod awesome;
+        pub(crate) mod deploy;
+        pub(crate) mod desktop_dependencies;
     }
 }
 
 #[component]
 fn HeaderFooter() -> Element {
+    let cb = use_callback(|| {
+        *SHOW_SEARCH.write() = true;
+    });
+
     shortcut::use_shortcut(Key::Character("/".to_string()), Modifiers::CONTROL, {
         move || {
-            *SHOW_SEARCH.write() = true;
+            cb.call();
         }
     });
 
     rsx! {
-        div {
+        div { class: "bg-white dark:bg-ideblack pb-8",
+            link { rel: "stylesheet", href: "/githubmarkdown.css" }
+            link { rel: "stylesheet", href: "/tailwind.css" }
+            link { rel: "stylesheet", href: "/main.css" }
             Nav {}
             Outlet::<Route> {}
-            Footer {}
         }
+        Footer {}
     }
 }
 
 #[derive(Clone, Routable, PartialEq, Eq, Serialize, Deserialize, Debug)]
 #[rustfmt::skip]
-pub enum Route {
+pub(crate) enum Route {
     #[layout(HeaderFooter)]
         #[route("/")]
         #[redirect("/platforms", || Route::Homepage {})]
@@ -124,11 +133,11 @@ pub enum Route {
     Err404 { segments: Vec<String> },
 }
 
-pub fn use_url() -> String {
+pub(crate) fn use_url() -> String {
     use_route::<Route>().to_string()
 }
 
-pub fn app() -> Element {
+pub(crate) fn app() -> Element {
     rsx! { Router::<Route> {} }
 }
 
@@ -159,11 +168,6 @@ mod docs {
             div {
                 class: "bg-white rounded-md shadow-md p-4 my-4 overflow-scroll text-black dioxus-demo",
                 max_height: "50vh",
-                style {
-                    ".dioxus-demo div {{ all: revert; }}"
-                    ".dioxus-demo input {{ all: revert; }}"
-                    ".dioxus-demo form {{ all: revert; }}"
-                }
                 {children}
             }
         }
@@ -238,7 +242,6 @@ pub enum Route {{\n\t"
 
     use_mdbook::mdbook_router! {"docs-src/0.5"}
 }
-
 
 fn main() {
     #[cfg(feature = "web")]

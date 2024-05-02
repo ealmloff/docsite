@@ -20,7 +20,7 @@ changes you can install the [`dx`][dx] tool locally, assuming you already have a
 working `Rust` setup:
 
 ```sh
-cargo install dioxus-cli@0.5.0-alpha.2
+cargo install dioxus-cli
 ```
 
 With [`dx`][dx] installed, you can use it to build and serve the documentation
@@ -46,6 +46,6 @@ documentation when it changes.
   />
 </a>
 
-[dx]: https://github.com/DioxusLabs/dioxus/tree/master/packages/cli
+[dx]: https://github.com/DioxusLabs/dioxus/tree/main/packages/cli
 [section on contributing]: https://dioxuslabs.com/learn/0.5/contributing
 [issue tracker]: https://github.com/dioxuslabs/docsite/issues

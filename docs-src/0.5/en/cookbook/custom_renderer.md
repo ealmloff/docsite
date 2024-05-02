@@ -15,7 +15,7 @@ Essentially, your renderer needs to process edits and generate events to update 
 
 Internally, Dioxus handles the tree relationship, diffing, memory management, and the event system, leaving as little as possible required for renderers to implement themselves.
 
-For reference, check out the [javascript interpreter](https://github.com/DioxusLabs/dioxus/tree/master/packages/interpreter) or [tui renderer](https://github.com/DioxusLabs/dioxus/tree/master/packages/dioxus-tui) as a starting point for your custom renderer.
+For reference, check out the [javascript interpreter](https://github.com/DioxusLabs/dioxus/tree/main/packages/interpreter) or [tui renderer](https://github.com/DioxusLabs/blitz/tree/master/packages/dioxus-tui) as a starting point for your custom renderer.
 
 ## Templates
 
@@ -59,7 +59,7 @@ Whenever a `CreateElement` edit is generated during diffing, Dioxus increments i
 For the sake of understanding, let's consider this example – a very simple UI declaration:
 
 ```rust
-rsx!( h1 {"count: {x}"} )
+rsx! { h1 { "count: {x}" } }
 ```
 
 #### Building Templates
@@ -293,11 +293,11 @@ fn virtual_event_from_websys_event(event: &web_sys::Event) -> VirtualEvent {
 
 If you need to go as far as relying on custom elements/attributes for your renderer – you totally can. This still enables you to use Dioxus' reactive nature, component system, shared state, and other features, but will ultimately generate different nodes. All attributes and listeners for the HTML and SVG namespace are shuttled through helper structs that essentially compile away. You can drop in your elements any time you want, with little hassle. However, you must be sure your renderer can handle the new namespace.
 
-For more examples and information on how to create custom namespaces, see the [`dioxus_html` crate](https://github.com/DioxusLabs/dioxus/blob/master/packages/html/README.md#how-to-extend-it).
+For more examples and information on how to create custom namespaces, see the [`dioxus_html` crate](https://github.com/DioxusLabs/dioxus/blob/main/packages/html/README.md#how-to-extend-it).
 
 # Native Core
 
-If you are creating a renderer in rust, the [native-core](https://github.com/DioxusLabs/dioxus/tree/master/packages/native-core) crate provides some utilities to implement a renderer. It provides an abstraction over Mutations and Templates and contains helpers that can handle the layout and text editing for you.
+If you are creating a renderer in rust, the [native-core](https://github.com/DioxusLabs/blitz/tree/master/packages/native-core) crate provides some utilities to implement a renderer. It provides an abstraction over Mutations and Templates and contains helpers that can handle the layout and text editing for you.
 
 ## The RealDom
 

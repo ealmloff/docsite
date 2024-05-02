@@ -4,7 +4,7 @@
 
 ---
 
-In preparation for the next big release of Dioxus, one of the lead contributors, Demonthos, added a long-awaited feature: **subtree memoization**.
+In preparation for the next big release of Dioxus, one of the lead contributors, ealmloff, added a long-awaited feature: **subtree memoization**.
 
 Subtree memoization reduces the overall work that Dioxus needs to do to get your desired UI state to the screen by several orders of magnitude. In fact, it’s so fast, that it pushes Dioxus to the leading edge of performance for web frameworks, on par with the likes of SolidJS, even beating out signal-based Rust libraries like Sycamore 0.8 and Leptos 0.0.3.
 
@@ -286,7 +286,7 @@ That being said, since Dioxus relies on a VirtualDom, it can be used as the prim
 - Static site generation
 - VR/AR (coming soon!)
 
-Note that all this work is being done for Dioxus 0.3 and hasn’t yet been released as a major version. We’re still dogfooding these changes to make sure no new bugs have slipped through. If you want these changes released sooner rather than later, feel free to build something with `master` and let us know!
+Note that all this work is being done for Dioxus 0.3 and hasn’t yet been released as a major version. We’re still dogfooding these changes to make sure no new bugs have slipped through. If you want these changes released sooner rather than later, feel free to build something with `main` and let us know!
 
 - Discord
 - Github

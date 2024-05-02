@@ -2,17 +2,37 @@
 
 This chapter will teach you how to create a [Component](../reference/components.md) that displays a link to a post on hackernews.
 
-First, let's define how to display a post. Dioxus is a *declarative* framework. This means that instead of telling Dioxus what to do (e.g. to "create an element" or "set the color to red") we simply *declare* how we want the UI to look.
+## Setup
+
+> Before you start the guide, make sure you have the dioxus CLI and any required dependencies for your platform as described in the [getting started](../getting_started/index.md) guide.
+
+First, let's create a new project for our hacker news app. We can use the CLI to create a new project. You can select a platform of your choice or view the getting started guide for more information on each option. If you aren't sure what platform to try out, we recommend getting started with web or desktop:
+
+```sh
+dx new
+```
+
+The template contains some boilerplate to help you get started. For this guide, we will be rebuilding some of the code from scratch for learning purposes. You can clear the `src/main.rs` file. We will be adding new code in the next sections.
+
+Next, let's setup our dependencies. We need to set up a few dependencies to work with the hacker news API: 
+
+```sh
+cargo add chrono --features serde
+cargo add futures
+cargo add reqwest --features json
+cargo add serde --features derive
+cargo add serde_json
+cargo add async_recursion
+```
+
+## Describing the UI
+
+Now, we can define how to display a post. Dioxus is a *declarative* framework. This means that instead of telling Dioxus what to do (e.g. to "create an element" or "set the color to red") we simply *declare* how we want the UI to look. 
 
 To declare what you want your UI to look like, you will need to use the `rsx` macro. Let's create a ``main`` function and an ``App`` component to show information about our story:
 
 ```rust
 {{#include src/doc_examples/hackernews_post.rs:story_v1}}
-```
-
-Before running your application, you will need to add Dioxus as a dependency:
-```bash
-cargo add dioxus@0.5.0-alpha.2 --features web
 ```
 
 Now if you run your application you should see something like this:
@@ -32,7 +52,7 @@ DemoFrame {
 > In addition to HTML, Dioxus uses CSS to style applications. You can either use traditional CSS (what this guide uses) or use a tool like [tailwind CSS](https://tailwindcss.com/docs/installation):
 > - [MDN Traditional CSS Guide](https://developer.mozilla.org/en-US/docs/Learn/HTML)
 > - [W3 Schools Traditional CSS Tutorial](https://www.w3schools.com/css/default.asp)
-> - [Tailwind tutorial](https://tailwindcss.com/docs/installation) (used with the [Tailwind setup example](https://github.com/DioxusLabs/dioxus/tree/master/examples/tailwind))
+> - [Tailwind tutorial](https://tailwindcss.com/docs/installation) (used with the [Tailwind setup example](https://github.com/DioxusLabs/dioxus/tree/main/examples/tailwind))
 > 
 > If you have existing html code, you can use the [translate](../CLI/translate.md) command to convert it to RSX. Or if you prefer to write html, you can use the [html! macro](https://github.com/DioxusLabs/dioxus-html-macro) to write html directly in your code.
 

@@ -2,7 +2,7 @@
 
 > Aug 1, 2023
 
-> [@jkelleyrtp](https://github.com/jkelleyrtp), [@demonthos](https://github.com/demonthos)
+> [@jkelleyrtp](https://github.com/jkelleyrtp), [@ealmloff](https://github.com/ealmloff)
 > Thanks to [@tefiledo](https://github.com/tefiledo) [@marc2332](https://github.com/marc2332)  [@DogeDark](https://github.com/DogeDark)
 
 
@@ -93,7 +93,7 @@ pub async fn timeout() -> ServerFnResult {
 }
 ```
 
-Combining all these concepts together, you can quickly add features like Authentication to your fullstack app. We’ve put together a [simple axum-auth example for you to get started](https://github.com/dioxuslabs/dioxus/blob/master/packages/fullstack/examples/axum-auth/src/main.rs).
+Combining all these concepts together, you can quickly add features like Authentication to your fullstack app. We’ve put together a [simple axum-auth example for you to get started](https://github.com/dioxuslabs/dioxus/blob/main/packages/fullstack/examples/axum-auth/src/main.rs).
 
 Our goal with Server Functions is to lay the foundation for our final vision of Dioxus: a fullstack, crossplatform, fully typed, and lightning fast toolkit for building, deploying, monitoring, and scaling any app you can dream of. With one ecosystem, you can quickly build complete apps that run on desktop, mobile, web with a type-safe backend to boot.
 
@@ -321,7 +321,7 @@ fn HeaderFooterNav(cx: Scope) -> Element {
 }
 ```
 
-The new router was an absolutely massive amount of work, spearheaded by @TeFiLeDo, improved by @demonthos, and made possible thanks to community members like @stephenandary and @attilio-oliva.
+The new router was an absolutely massive amount of work, spearheaded by @TeFiLeDo, improved by @ealmloff, and made possible thanks to community members like @stephenandary and @attilio-oliva.
 
 ![PR of enum router](/static/enum_router.png)
 

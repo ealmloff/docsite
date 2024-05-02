@@ -13,29 +13,27 @@ jobs:
   build-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: ilammy/setup-nasm@v1
-      - uses: actions-rs/toolchain@v1
+      - uses: actions/checkout@v4
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@master
         with:
-          profile: minimal
           toolchain: stable
-          override: true
-          target: wasm32-unknown-unknown
-      - uses: Swatinem/rust-cache@v1
-      # TOOD: enable cache once stable CLI is working
-      # - uses: actions-rs/install@v0.1
-      #   with:
-      #     crate: dioxus-cli
-      #     version: latest
-      #     use-tool-cache: true
+          targets: x86_64-unknown-linux-gnu,wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+        with:
+          cache-all-crates: "true"
+          save-if: ${{ github.ref == 'refs/heads/main' }}
+      - uses: cargo-bins/cargo-binstall@main
       - name: Install CLI
-        run: cargo install --git https://github.com/ealmloff/dioxus --branch switch-to-tracing-cli dioxus-cli
-      - uses: actions/checkout@v2
-      - name: Build Web
+        run: cargo binstall dioxus-cli -y --force
+      - name: Build
         run: dx build --release --features web
-      - name: Prebuild
-        run: cargo run --release --features prebuild 
-      - name: Copy 404
+      - name: Build Static HTML
+        run: cargo run --release --features prebuild
+      - name: Create 404.html
         run: cp docs/index.html docs/404.html
+      - name: Rebuild with search index
+        run: dx build --release --features web && cp docs/404.html docs/index.html
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4.2.3
         with:

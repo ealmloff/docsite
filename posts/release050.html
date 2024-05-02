@@ -1,4 +1,11 @@
-<h1 id="dioxus-0-5-signal-rewrite-remove-lifetimes-unsafe-css-hotreloading-5x-faster-desktop-asset-system-and-more-">Dioxus 0.5: Signal Rewrite, Remove lifetimes/unsafe, CSS Hotreloading, 5x Faster Desktop,  Asset System, and more!</h1>
+<h1 id="dioxus-0-5-signal-rewrite-remove-lifetimes-unsafe-css-hotreloading-5x-faster-desktop-asset-system-and-more-">Dioxus 0.5: Signal Rewrite, Remove lifetimes, CSS Hotreloading, and more!</h1>
+<blockquote>
+<p>March 28, 2024</p>
+<p>
+    <a href="https://github.com/jkelleyrtp">@jkelleyrtp</a>,
+    <a href="https://github.com/ealmloff">@ealmloff</a>
+</p>
+</blockquote>
 <h3 id="the-story">The story</h3>
 
 <p>Here at Dioxus Labs, we have an unofficial rule: only one rewrite per year.  </p>
@@ -125,7 +132,7 @@ fn OldDioxusComponent(cx: Scope) -&gt; Element {
 
 <p>Dioxus 0.5 introduces Signals as the core state primitive for components. Signals have two key advantages over the existing <code>use_state</code> and <code>use_ref</code> hooks: They are always <code>Copy</code> and they don’t require manual subscriptions.</p>
 <h3 id="copy-state">Copy state</h3>
-<p><code>Signal&lt;T&gt;</code> is <code>Copy</code>, even if the inner <code>T</code> values is not. This is enabled by our new <code>[generational-box](https://crates.io/crates/generational-box)</code> crate (implemented with zero unsafe). Signals can even optionally be <code>Send+Sync</code> if you need to move them between threads, removing the need for a whole class of specialized state management solutions.</p>
+<p><code>Signal&lt;T&gt;</code> is <code>Copy</code>, even if the inner <code>T</code> values is not. This is enabled by our new <a href="https://crates.io/crates/generational-box">generational-box</a> crate (implemented with zero unsafe). Signals can even optionally be <code>Send+Sync</code> if you need to move them between threads, removing the need for a whole class of specialized state management solutions.</p>
 <p>The combination of <code>Copy + Send + Sync</code> Signals, and static components makes it incredibly easy to move state to anywhere you need it:</p>
 <pre><code class="lang-rust"><span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">Parent</span></span>() -&gt; Element {
     <span class="hljs-comment">// We use a sync signal here so that we can use it in other threads, </span>
@@ -135,7 +142,7 @@ fn OldDioxusComponent(cx: Scope) -&gt; Element {
     spawn(async <span class="hljs-keyword">move</span> {
         <span class="hljs-comment">// Signals have a ton of helper methods that make them easy to work with. </span>
         <span class="hljs-comment">// You can call a signal like a function to get the current value</span>
-        <span class="hljs-keyword">let</span> value: <span class="hljs-keyword">i32</span>: state();
+        <span class="hljs-keyword">let</span> value: <span class="hljs-keyword">i32</span> = state();
     });
 
     <span class="hljs-comment">// Because signals can be sync, we can copy them into threads easily</span>
@@ -147,8 +154,10 @@ fn OldDioxusComponent(cx: Scope) -&gt; Element {
     });
 
     rsx! {
-        <span class="hljs-comment">// You can easily move it into an event handler just like use_state</span>
-        onclick: <span class="hljs-keyword">move</span> |_| state += <span class="hljs-number">1</span>;
+        button {
+            <span class="hljs-comment">// You can easily move it into an event handler just like use_state</span>
+            onclick: <span class="hljs-keyword">move</span> |_| state += <span class="hljs-number">1</span>
+        }
     }
 }
 </code></pre>
@@ -218,6 +227,21 @@ fn Child() -&gt; Element {
     rsx! { <span class="hljs-string">"{memo}"</span> }
 }
 </code></pre>
+<h2 id="css-hot-reloading">CSS Hot Reloading</h2>
+
+<p>As part of our asset system overhaul, we implemented hotreloading of CSS files in the asset directory. If a CSS file appears in your RSX, the <code>dx</code> CLI will watch that file and immediately stream its updates to the running app. This works for web, desktop, and fullstack, with mobile support coming in a future mobile-centric update. </p>
+<p><video controls autoplay muted src="https://i.imgur.com/oXS8hYW.mp4" alt="CSS Hotreloading"></p>
+<p>When combined with the Tailwind watcher, we now support hotreloading of Tailwind CSS! On top of that, we also support IDE hinting of Tailwind classes in VSCode with a <a href="https://github.com/tailwindlabs/tailwindcss/discussions/7073" target="_blank" >custom regex extension</a></p>
+<p><video controls autoplay muted src="https://imgur.com/CSjVVLL" alt="CSS Hotreloading"></p>
+
+<!-- https://i.imgur.com/oXS8hYW.mp4 -->
+<!-- <p><a href="Dioxus%200%205%20Signal%20Rewrite,%20Remove%20lifetimes%20unsafe%209961963b731a4d9f8465e5bcdf8e9ab3/Screen_Recording_2024-03-20_at_6.30.47_AM.mov">Screen Recording 2024-03-20 at 6.30.47 AM.mov</a></p> -->
+<!-- <p><a href="Dioxus%200%205%20Signal%20Rewrite,%20Remove%20lifetimes%20unsafe%209961963b731a4d9f8465e5bcdf8e9ab3/Screen_Recording_2024-03-20_at_6.30.47_AM.mov">Screen Recording 2024-03-20 at 6.30.47 AM.mov</a></p> -->
+<p>What’s even niftier is that you can stream these changes to several devices at once, unlocking simultaneous hotreloading across all devices that you target:</p>
+<!-- https://i.imgur.com/cZ8qZCz.mp4 -->
+<p><video controls autoplay muted src="https://i.imgur.com/cZ8qZCz.mp4" alt="CSS Hotreloading"></p>
+
+<!-- <p><a href="Dioxus%200%205%20Signal%20Rewrite,%20Remove%20lifetimes%20unsafe%209961963b731a4d9f8465e5bcdf8e9ab3/Hotreload_triple_-_HD_1080p.mov">Hotreload triple - HD 1080p.mov</a></p> -->
 <h2 id="event-system-rewrite">Event System Rewrite</h2>
 
 <p>Since it’s release, dioxus has used a synthetic event system to create a cross platform event API. Synthetic events can be incredibly useful to make events work across platforms and even serialize them across the network, but they do have some drawbacks.</p>
@@ -280,24 +304,13 @@ dx serve <span class="hljs-comment">--platform fullstack</span>
 
 <p>Currently assets in dioxus (and web applications in general) can be difficult to get right. Links to your asset can easily get out of date, the link to your asset can be different between desktop and web applications, and you need to manually add assets you want to use into your bundled application. In addition to all of that, assets can be a huge performance bottleneck.</p>
 <p>Lets take a look at the dioxus mobile guide in the docsite as an example:</p>
-<p><img src="https://i.imgur.com/GabzFJm.png" alt="docsite_mobile_old.png"></p>
+<p><img src="https://i.imgur.com/f7sGEdJ.png" alt="docsite_mobile_old.png"></p>
 <p>The 0.4 mobile guide takes 7 seconds to load and transfers 9 MB of resources. The page has 6 different large image files which slows down the page loading times significantly. We could switch to a more optimized image format like <code>avif</code> , but manually converting every screenshot is tedious and time consuming.</p>
 <p>Lets take a look at the 0.5 mobile guide with the new asset system:</p>
-<p><img src="https://i.imgur.com/f7sGEdJ.png" alt="docsite_mobile_new.png"></p>
+<p><img src="https://i.imgur.com/GabzFJm.png" alt="docsite_mobile_new.png"></p>
 <p>The new mobile guide takes less than 1 second to load and requires only 1/3 of the resources with the exact same images!</p>
-<p>Dioxus 0.5 introduces a new asset system called <code>[manganis](https://github.com/DioxusLabs/collect-assets)</code>. Manganis integrates with the CLI to check, bundle and optimize assets in your application. The API is currently unstable so the asset system is currently published as a separate crate. In the new asset system, you can just wrap your assets in the <code>mg!</code> macro and they will automatically be picked up by the CLI. You can read more about the new asset system in the <a href="https://docs.rs/crate/manganis/latest">manganis docs</a>.</p>
+<p>Dioxus 0.5 introduces a new asset system called <a href="https://github.com/DioxusLabs/collect-assets">manganis</a>. Manganis integrates with the CLI to check, bundle and optimize assets in your application. The API is currently unstable so the asset system is currently published as a separate crate. In the new asset system, you can just wrap your assets in the <code>mg!</code> macro and they will automatically be picked up by the CLI. You can read more about the new asset system in the <a href="https://docs.rs/crate/manganis/latest">manganis docs</a>.</p>
 <p>As we continue to iterate on the 0.5 release, we plan to add hot reloading to manganis assets, so you can interactively add new the features to your app like CSS, images, tailwind classes, and more without forcing a complete reload.</p>
-<h2 id="css-hot-reloading">CSS Hot Reloading</h2>
-
-<p>As part of our asset system overhaul, we implemented hotreloading of CSS files in the asset directory. If a CSS file appears in your RSX, the <code>dx</code> CLI will watch that file and immediately stream its updates to the running app. This works for web, desktop, and fullstack, with mobile support coming in a future mobile-centric update. </p>
-<p><video controls autoplay muted src="https://i.imgur.com/oXS8hYW.mp4" alt="CSS Hotreloading"></p>
-<!-- https://i.imgur.com/oXS8hYW.mp4 -->
-<!-- <p><a href="Dioxus%200%205%20Signal%20Rewrite,%20Remove%20lifetimes%20unsafe%209961963b731a4d9f8465e5bcdf8e9ab3/Screen_Recording_2024-03-20_at_6.30.47_AM.mov">Screen Recording 2024-03-20 at 6.30.47 AM.mov</a></p> -->
-<!-- <p><a href="Dioxus%200%205%20Signal%20Rewrite,%20Remove%20lifetimes%20unsafe%209961963b731a4d9f8465e5bcdf8e9ab3/Screen_Recording_2024-03-20_at_6.30.47_AM.mov">Screen Recording 2024-03-20 at 6.30.47 AM.mov</a></p> -->
-<p>What’s even niftier is that you can stream these changes to several devices at once, unlocking simultaneous hotreloading across all devices that you target:</p>
-<!-- https://i.imgur.com/cZ8qZCz.mp4 -->
-<p><video controls autoplay muted src="https://i.imgur.com/cZ8qZCz.mp4" alt="CSS Hotreloading"></p>
-<!-- <p><a href="Dioxus%200%205%20Signal%20Rewrite,%20Remove%20lifetimes%20unsafe%209961963b731a4d9f8465e5bcdf8e9ab3/Hotreload_triple_-_HD_1080p.mov">Hotreload triple - HD 1080p.mov</a></p> -->
 <h2 id="5x-faster-desktop-rendering">5x Faster Desktop Rendering</h2>
 
 <p>Dioxus implements several optimizations to make diffing rendering fast. <a href="https://dioxuslabs.com/blog/templates-diffing">Templates</a> let dioxus skip diffing on any static parts of the rsx macro. However, diffing is only one side of the story. After you create a list of changes you need to make to the DOM, you need to apply them.</p>
@@ -326,13 +339,15 @@ fn ImgPlus(props: Props) -&gt; <span class="hljs-class">Element </span>{
     }
 }
 
-rsx! {
-  <span class="hljs-class">ImgPlus </span>{
-    <span class="hljs-comment">// You can use any attributes you would normally use on the img element</span>
-    <span class="hljs-symbol">width:</span> <span class="hljs-string">"10px"</span>,
-    <span class="hljs-symbol">height:</span> <span class="hljs-string">"10px"</span>,
-    <span class="hljs-symbol">src:</span> <span class="hljs-string">"https://example.com/image.png"</span>,
-  }
+fn app() -&gt; <span class="hljs-class">Element </span>{
+    rsx! {
+        <span class="hljs-class">ImgPlus </span>{
+            <span class="hljs-comment">// You can use any attributes you would normally use on the img element</span>
+            <span class="hljs-symbol">width:</span> <span class="hljs-string">"10px"</span>,
+            <span class="hljs-symbol">height:</span> <span class="hljs-string">"10px"</span>,
+            <span class="hljs-symbol">src:</span> <span class="hljs-string">"https://example.com/image.png"</span>,
+        }
+    }
 }
 </code></pre>
 <h2 id="shorthand-attributes">Shorthand attributes</h2>
@@ -341,7 +356,7 @@ rsx! {
 <pre><code class="lang-rust">#[component]
 fn ImgPlus(<span class="hljs-class"><span class="hljs-keyword">class</span>: <span class="hljs-type">String</span>, <span class="hljs-type">id: String</span>, <span class="hljs-type">src: String) -&gt; Element {</span></span>
     rsx! {
-        img { <span class="hljs-class"><span class="hljs-keyword">class</span>, <span class="hljs-type">id</span>, <span class="hljs-type">string }</span></span>
+        img { <span class="hljs-class"><span class="hljs-keyword">class</span>, <span class="hljs-type">id</span>, <span class="hljs-type">src }</span></span>
     }
 }
 </code></pre>
@@ -400,8 +415,8 @@ dx serve --<span class="hljs-keyword">platform</span> fullstack
 <p><video controls autoplay muted src="https://i.imgur.com/vkkDDid.mp4" alt="Native file drop"></p>
 <!-- <p><a href="Dioxus%200%205%20Signal%20Rewrite,%20Remove%20lifetimes%20unsafe%209961963b731a4d9f8465e5bcdf8e9ab3/native_drop.mov">native_drop.mov</a></p> -->
 <!-- <p><a href="Dioxus%200%205%20Signal%20Rewrite,%20Remove%20lifetimes%20unsafe%209961963b731a4d9f8465e5bcdf8e9ab3/native_drop.mov">native_drop.mov</a></p> -->
-<p>Previously we just gave you the option to intercept filedrops but now it’s natively integrated into the event systme.</p>
-<h2 id="error-handling">Error handling</h2>a
+<p>Previously we just gave you the option to intercept filedrops but now it’s natively integrated into the event system</p>
+<h2 id="error-handling">Error handling</h2>
 
 <p>Error handling: You can use error boundaries and the throw trait to easily handle errors higher up in your app</p>
 <p>Dioxus provides a much easier way to handle errors: throwing them. Throwing errors combines the best parts of an error state and early return: you can easily throw an error with <code>?</code>, but you keep information about the error so that you can handle it in a parent component.</p>
