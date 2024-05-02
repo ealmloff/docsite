@@ -80,7 +80,7 @@ tracing = "0.1.40"
 rand = { version = "0.8.5", optional = true }
 
 [patch.'https://github.com/DioxusLabs/collect-assets']
-manganis = { git = "https://www.github.com/DioxusLabs/collect-assets", branch = "more-tracing" }
+manganis = { git = "https://www.github.com/DioxusLabs/collect-assets" }
 
 [patch.crates-io]
 dioxus = { git = "https://github.com/dioxuslabs/dioxus" }
