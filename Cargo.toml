@@ -23,7 +23,7 @@ dioxus-liveview = { git = "https://github.com/dioxuslabs/dioxus", features = [
 ], optional = true }
 dioxus-native-core = { git = "https://github.com/dioxuslabs/blitz", optional = true }
 dioxus-native-core-macro = { git = "https://github.com/dioxuslabs/blitz", optional = true }
-manganis = { git = "https://github.com/DioxusLabs/collect-assets", branch = "more-tracing" }
+manganis = { git = "https://github.com/DioxusLabs/collect-assets" }
 serde = { version = "1.0.163", features = ["derive"] }
 serde_json = "1.0.96"
 log = "0.4.17"
@@ -102,7 +102,7 @@ dioxus-liveview = { git = "https://github.com/dioxuslabs/dioxus" }
 dioxus-fullstack = { git = "https://github.com/dioxuslabs/dioxus" }
 dioxus-native-core = { git = "https://github.com/dioxuslabs/blitz" }
 dioxus-native-core-macro = { git = "https://github.com/dioxuslabs/blitz" }
-manganis = { git = "https://github.com/DioxusLabs/collect-assets", branch = "more-tracing" }
+manganis = { git = "https://github.com/DioxusLabs/collect-assets" }
 
 [profile.release]
 lto = true
